@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd http://nifty-gui.sourceforge.net/nifty-1.3.xsd ">
+  <useStyles filename="nifty-default-styles.xml" />
+  <useControls filename="nifty-default-controls.xml" />
+  <screen id="HUD" controller="myGame.Quad3D">
+  	<layer id="foreground" backgroundColor="#0000"
+  		childLayout="horizontal">
+  		<panel id="panel left" width="80%" height="100%"
+  			childLayout="vertical" backgroundColor="#fff0">
+  		</panel>
+  		<panel id="panel right" width="20%" childLayout="vertical"
+  			backgroundColor="#fff0" style="nifty-panel">
+  			<control name="horizontalSlider" width="100%" id="sliderH"
+  				visibleToMouse="true" min="1200" max="1700">
+  			</control>
+  		</panel>
+  	</layer>
+  </screen>
+</nifty>

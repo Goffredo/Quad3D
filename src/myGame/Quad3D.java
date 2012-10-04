@@ -26,6 +26,7 @@ import com.jme3.scene.shape.Sphere.TextureMode;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
+import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.SliderChangedEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
@@ -43,23 +44,23 @@ public class Quad3D extends SimpleApplication implements ScreenController {
 	}
 
 	/** Prepare the Physics Application State (jBullet) */
-	private BulletAppState bulletAppState;
+	private BulletAppState		bulletAppState;
 
 	/** Prepare Materials */
-	Material cannon_mat;
-	Material floor_mat;
+	Material					cannon_mat;
+	Material					floor_mat;
 
 	/** Prepare geometries and physical nodes */
-	private RigidBodyControl ball_phy;
-	private static final Sphere sphere;
-	private RigidBodyControl floor_phy;
-	private static final Box floor;
+	private RigidBodyControl	ball_phy;
+	private static final Sphere	sphere;
+	private RigidBodyControl	floor_phy;
+	private static final Box	floor;
 
 	/** Prepare quadcopter */
-	Quadcopter quad;
-	private Node quad_Node;
+	Quadcopter					quad;
+	private Node				quad_Node;
 
-	private Nifty nifty;
+	private Nifty				nifty;
 
 	static {
 		/** Initialize the cannon ball geometry */
@@ -75,11 +76,13 @@ public class Quad3D extends SimpleApplication implements ScreenController {
 		/** Set up Physics Game */
 		bulletAppState = new BulletAppState();
 		stateManager.attach(bulletAppState);
+		bulletAppState.setSpeed(10.0f);
 		bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 		bulletAppState.setBroadphaseType(BroadphaseType.AXIS_SWEEP_3);
 		bulletAppState.setWorldMax(new Vector3f(10, 10, 10));
 		bulletAppState.setWorldMin(new Vector3f(-10, -10, -10));
 		bulletAppState.getPhysicsSpace().setAccuracy(1 / 100f);
+
 		/** Configure cam to look at scene */
 		cam.setLocation(new Vector3f(0, 8f, 15f));
 		cam.lookAt(new Vector3f(2, 2, 0), Vector3f.UNIT_Y);
@@ -99,12 +102,14 @@ public class Quad3D extends SimpleApplication implements ScreenController {
 		/** Initialize GUI */
 		NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager,
 				inputManager, audioRenderer, guiViewPort);
-		nifty = niftyDisplay.getNifty();		
+		nifty = niftyDisplay.getNifty();
 		nifty.fromXml("Interface/HUD.xml", "HUD", this);
 		guiViewPort.addProcessor(niftyDisplay);
-		java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
-		java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
-		}
+		java.util.logging.Logger.getAnonymousLogger().getParent()
+				.setLevel(java.util.logging.Level.SEVERE);
+		java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(
+				java.util.logging.Level.SEVERE);
+	}
 
 	/* Initialize the quadcopter */
 	private void initQuadcopter() {
@@ -121,13 +126,17 @@ public class Quad3D extends SimpleApplication implements ScreenController {
 	 * The ball is set up to fly from the camera position in the camera
 	 * direction.
 	 */
-	private ActionListener actionListener = new ActionListener() {
-		public void onAction(String name, boolean keyPressed, float tpf) {
-			if (name.equals("shoot") && !keyPressed) {
-				makeCannonBall();
-			}
-		}
-	};
+	private ActionListener	actionListener	= new ActionListener() {
+												public void onAction(
+														String name,
+														boolean keyPressed,
+														float tpf) {
+													if (name.equals("shoot")
+															&& !keyPressed) {
+														makeCannonBall();
+													}
+												}
+											};
 
 	/** Initialize the materials used in this scene. */
 	public void initMaterials() {
@@ -195,22 +204,37 @@ public class Quad3D extends SimpleApplication implements ScreenController {
 	@Override
 	public void onEndScreen() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onStartScreen() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	@NiftyEventSubscriber(id="sliderH")
-	public void sliderChanged(final String id, final SliderChangedEvent event){
+
+	@NiftyEventSubscriber(id = "sliderH")
+	public void sliderChanged(final String id, final SliderChangedEvent event) {
 		float PPM = event.getValue();
-		System.out.println("Set PPM: "+PPM);
-		for (Motor motor : quad.getQuad_motors().motors){
+		System.out.println("Set PPM: " + PPM);
+		for (Motor motor : quad.getQuad_motors().motors) {
 			motor.setPPM(PPM);
 		}
 	}
-	
+
+	@Override
+	public void simpleUpdate(float tpf) {
+		Label niftyElement = nifty.getCurrentScreen().findNiftyControl(
+				"forceM1", Label.class);
+		niftyElement.setText("Force erogated by motor 1: "
+				+ Float.toString(quad.getQuad_motors().motors[0]
+						.getCurrentForce()));
+
+		niftyElement = nifty.getCurrentScreen().findNiftyControl("PPMM1",
+				Label.class);
+		niftyElement.setText("Current set PPM motor 1: "
+				+ Float.toString(quad.getQuad_motors().motors[0]
+						.getCurrentPPM()));
+		super.simpleUpdate(tpf);
+	}
 }

@@ -1,6 +1,5 @@
 package myGame.motors;
 
-
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
@@ -12,16 +11,15 @@ import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
 
 public class MotorControl extends AbstractControl {
-	
-	private RigidBodyControl rbControl;
-	
-	public Motor motors[] = new Motor[] {
-				new Motor(),
-				new Motor(),
-				new Motor(),
-				new Motor()
-	};
-	
+
+	private RigidBodyControl	rbControl;
+
+	public Motor				motors[]	= new Motor[] {
+			new Motor(),
+			new Motor(),
+			new Motor(),
+			new Motor()					};
+
 	public MotorControl(RigidBodyControl quad_phy) {
 		rbControl = quad_phy;
 	}
@@ -41,12 +39,17 @@ public class MotorControl extends AbstractControl {
 	@Override
 	protected void controlUpdate(float tpf) {
 		float force = 0;
-		for(int i = 0; i<4; i++){
+		for (int i = 0; i < 4; i++) {
 			motors[i].update();
-			force = motors[i].getCurrentForce();			
-			Vector2f angle = new Vector2f(FastMath.sin(i*FastMath.PI), FastMath.sin(i*FastMath.PI));
-			rbControl.applyImpulse(getSpatial().getLocalRotation().mult(Vector3f.UNIT_Y.mult(force)), getSpatial().getLocalRotation().mult(Vector3f.UNIT_Y.mult(24.5f)));
+			force = motors[i].getCurrentForce();
+			Vector2f angle = new Vector2f(FastMath.sin(i * FastMath.PI),
+					FastMath.sin(i * FastMath.PI));
+			rbControl.applyImpulse(
+					getSpatial().getLocalRotation().mult(
+							Vector3f.UNIT_Y.mult(force)),
+					getSpatial().getLocalRotation().mult(
+							Vector3f.UNIT_Y.mult(24.5f)));
 		}
 	}
-	
+
 }

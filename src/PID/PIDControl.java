@@ -11,21 +11,20 @@ import com.jme3.scene.control.Control;
 
 public class PIDControl extends AbstractControl {
 
-	private MotorControl mControl;
+	private MotorControl	mControl;
 
-	private float Kp;
-	private float Ki;
-	private float Kd;
+	private float			Kp;
+	private float			Ki;
+	private float			Kd;
 
-	private float target = 5f;
+	private float			target	= 5f;
 
-	private float lastError;
+	private float			lastError;
 
-
-	public PIDControl(float Kp, float Ki, float Kd, MotorControl quad_motors){
+	public PIDControl(float Kp, float Ki, float Kd, MotorControl quad_motors) {
 		this.Kp = Kp;
 		this.Ki = Ki;
-		this.Kd = Kd;		
+		this.Kd = Kd;
 		mControl = quad_motors;
 	}
 
@@ -44,16 +43,16 @@ public class PIDControl extends AbstractControl {
 	@Override
 	protected void controlUpdate(float arg0) {
 		float err = target - getSpatial().getLocalTranslation().y;
-		
+
 		float P = Kp * err;
 		float D = Kd * (lastError - err);
-		
+
 		if (enabled && spatial != null) {
-			for(Motor motor : mControl.motors){
-				motor.setPPM(P-D);				
+			for (Motor motor : mControl.motors) {
+				motor.setPPM(P - D);
 			}
 		}
-		
+
 		lastError = getSpatial().getLocalTranslation().y;
 	}
 }

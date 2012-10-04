@@ -10,13 +10,37 @@
   		</panel>
   		<panel id="panel right" width="40%" childLayout="vertical"
   			backgroundColor="#fff0" style="nifty-panel">
-  			<control name="horizontalSlider" width="100%" id="sliderH"
+  			<control name="horizontalSlider" width="100%" id="sliderH0"
+  				visibleToMouse="true" min="1200" max="1700" buttonStepSize="10">
+  			</control><control name="label" id="PPMM0" width="100%" align="left">
+  			</control>
+  			<control name="label" id="forceM0" width="100%"
+  				align="left">
+  			</control> 
+  			
+  			<control name="horizontalSlider" width="100%" id="sliderH1"
   				visibleToMouse="true" min="1200" max="1700" buttonStepSize="10">
   			</control><control name="label" id="PPMM1" width="100%" align="left">
   			</control>
   			<control name="label" id="forceM1" width="100%"
   				align="left">
+  			</control>  
+  			
+  			<control name="horizontalSlider" width="100%" id="sliderH2"
+  				visibleToMouse="true" min="1200" max="1700" buttonStepSize="10">
+  			</control><control name="label" id="PPMM2" width="100%" align="left">
   			</control>
+  			<control name="label" id="forceM2" width="100%"
+  				align="left">
+  			</control>  
+  			
+  			<control name="horizontalSlider" width="100%" id="sliderH3"
+  				visibleToMouse="true" min="1200" max="1700" buttonStepSize="10">
+  			</control><control name="label" id="PPMM3" width="100%" align="left">
+  			</control>
+  			<control name="label" id="forceM3" width="100%"
+  				align="left">
+  			</control> 
   			
   		</panel>
   	</layer>

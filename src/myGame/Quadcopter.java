@@ -1,7 +1,6 @@
 package myGame;
 
 import myGame.motors.MotorControl;
-import PID.PIDControl;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -18,7 +17,6 @@ public class Quadcopter {
 	private final float				mass	= 2f;
 	private final RigidBodyControl	quad_phy;
 	private final MotorControl		quad_motors;
-	private final PIDControl		quad_PID;
 
 	private Node createGeometry(AssetManager assetManager) {
 		/** Create meshes for the arms of the quadcopters */
@@ -59,13 +57,7 @@ public class Quadcopter {
 		geometry = createGeometry(assetManager);
 		quad_phy = preparePhy();
 		quad_motors = prepareMotors();
-		quad_PID = preparePID();
 		addControls();
-	}
-
-	private PIDControl preparePID() {
-		/** PID setup */
-		return new PIDControl(1500f, 0f, 90f, quad_motors);
 	}
 
 	private MotorControl prepareMotors() {
@@ -86,8 +78,6 @@ public class Quadcopter {
 	}
 
 	private void addControls() {
-
-		// quadcopter_node.addControl(quad_PID);
 
 		geometry.addControl(quad_motors);
 

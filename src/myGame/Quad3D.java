@@ -1,6 +1,6 @@
 package myGame;
 
-import myGame.motors.Motor;
+import myGame.GUI.GuiManager;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
@@ -26,7 +26,6 @@ import com.jme3.scene.shape.Sphere.TextureMode;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
-import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.SliderChangedEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
@@ -84,7 +83,7 @@ public class Quad3D extends SimpleApplication implements ScreenController {
 		bulletAppState.getPhysicsSpace().setAccuracy(1 / 100f);
 
 		/** Configure cam to look at scene */
-		cam.setLocation(new Vector3f(0, 8f, 15f));
+		cam.setLocation(new Vector3f(0, 20f, 30f));
 		cam.lookAt(new Vector3f(2, 2, 0), Vector3f.UNIT_Y);
 		flyCam.setMoveSpeed(5.0f);
 		flyCam.setDragToRotate(true);
@@ -213,28 +212,14 @@ public class Quad3D extends SimpleApplication implements ScreenController {
 
 	}
 
-	@NiftyEventSubscriber(id = "sliderH")
+	@NiftyEventSubscriber(pattern = "sliderH.*")
 	public void sliderChanged(final String id, final SliderChangedEvent event) {
-		float PPM = event.getValue();
-		System.out.println("Set PPM: " + PPM);
-		for (Motor motor : quad.getQuad_motors().motors) {
-			motor.setPPM(PPM);
-		}
+		GuiManager.sliderChanged(event, quad);
 	}
 
 	@Override
 	public void simpleUpdate(float tpf) {
-		Label niftyElement = nifty.getCurrentScreen().findNiftyControl(
-				"forceM1", Label.class);
-		niftyElement.setText("Force erogated by motor 1: "
-				+ Float.toString(quad.getQuad_motors().motors[0]
-						.getCurrentForce()));
-
-		niftyElement = nifty.getCurrentScreen().findNiftyControl("PPMM1",
-				Label.class);
-		niftyElement.setText("Current set PPM motor 1: "
-				+ Float.toString(quad.getQuad_motors().motors[0]
-						.getCurrentPPM()));
+		GuiManager.updateQuadLabels(nifty, quad);
 		super.simpleUpdate(tpf);
 	}
 }

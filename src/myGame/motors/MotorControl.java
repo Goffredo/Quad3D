@@ -42,8 +42,8 @@ public class MotorControl extends AbstractControl {
 		for (int i = 0; i < 4; i++) {
 			motors[i].update();
 			force = motors[i].getCurrentForce();
-			Vector2f angle = new Vector2f(FastMath.cos(i * FastMath.PI),
-					FastMath.sin(i * FastMath.PI));
+			Vector2f angle = new Vector2f(FastMath.cos(i * (FastMath.PI / 2f)),
+					FastMath.sin(i * (FastMath.PI / 2f)));
 			Vector3f tAngle = new Vector3f(angle.x, 0, angle.y).mult(13);
 			/** apply lift thrust */
 			rbControl.applyImpulse(

@@ -1,6 +1,7 @@
 package myGame;
 
 import myGame.motors.MotorControl;
+import stabilizationControls.HeightControl;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -15,8 +16,28 @@ import com.jme3.scene.shape.Box;
 public class Quadcopter {
 
 	private final float				mass	= 2f;
-	private final RigidBodyControl	quad_phy;
-	private final MotorControl		quad_motors;
+	private final RigidBodyControl	phy;
+	private final MotorControl		motors;
+	private final HeightControl		heightControl;
+
+	private final Node	geometry;
+
+	public Quadcopter(AssetManager assetManager) {
+		geometry = createGeometry(assetManager);
+		phy = preparePhy();
+		motors = prepareMotors();
+		heightControl = new HeightControl(motors);
+		addControls();
+	}
+
+	private void addControls() {
+
+		geometry.addControl(getHeightControl());
+
+		geometry.addControl(motors);
+
+		geometry.addControl(phy);
+	}
 
 	private Node createGeometry(AssetManager assetManager) {
 		/** Create meshes for the arms of the quadcopters */
@@ -43,26 +64,25 @@ public class Quadcopter {
 		return quadcopter_node;
 	}
 
+	public Node getGeometry() {
+		return geometry;
+	}
+
+	public MotorControl getMotors() {
+		return motors;
+	}
+
 	public RigidBodyControl getPhy() {
-		return quad_phy;
+		return phy;
 	}
 
-	public MotorControl getQuad_motors() {
-		return quad_motors;
-	}
-
-	private final Node	geometry;
-
-	public Quadcopter(AssetManager assetManager) {
-		geometry = createGeometry(assetManager);
-		quad_phy = preparePhy();
-		quad_motors = prepareMotors();
-		addControls();
+	public HeightControl getHeightControl() {
+		return heightControl;
 	}
 
 	private MotorControl prepareMotors() {
 		/** Motor setup */
-		return new MotorControl(quad_phy);
+		return new MotorControl(phy);
 	}
 
 	private RigidBodyControl preparePhy() {
@@ -71,17 +91,6 @@ public class Quadcopter {
 				CollisionShapeFactory.createBoxShape(geometry), mass);
 		temp.setFriction(0.5f);
 		return temp;
-	}
-
-	public Node getGeometry() {
-		return geometry;
-	}
-
-	private void addControls() {
-
-		geometry.addControl(quad_motors);
-
-		geometry.addControl(quad_phy);
 	}
 
 }

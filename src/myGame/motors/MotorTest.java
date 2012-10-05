@@ -31,7 +31,7 @@ public class MotorTest {
 			}
 
 			testMotor.update();
-			System.out.println("Motor RPM: " + testMotor.getCurrentPPM());
+			System.out.println("Motor RPM: " + testMotor.getCurrentRPM());
 			System.out.println("Byte read: " + read);
 
 		}

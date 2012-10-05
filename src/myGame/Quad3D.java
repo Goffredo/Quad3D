@@ -70,56 +70,6 @@ public class Quad3D extends SimpleApplication implements ScreenController {
 		floor.scaleTextureCoordinates(new Vector2f(3, 6));
 	}
 
-	@Override
-	public void simpleInitApp() {
-		/** Set up Physics Game */
-		bulletAppState = new BulletAppState();
-		stateManager.attach(bulletAppState);
-		bulletAppState.setSpeed(10.0f);
-		bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-		bulletAppState.setBroadphaseType(BroadphaseType.AXIS_SWEEP_3);
-		bulletAppState.setWorldMax(new Vector3f(10, 10, 10));
-		bulletAppState.setWorldMin(new Vector3f(-10, -10, -10));
-		bulletAppState.getPhysicsSpace().setAccuracy(1 / 100f);
-
-		/** Configure cam to look at scene */
-		cam.setLocation(new Vector3f(0, 20f, 30f));
-		cam.lookAt(new Vector3f(2, 2, 0), Vector3f.UNIT_Y);
-		flyCam.setMoveSpeed(5.0f);
-		flyCam.setDragToRotate(true);
-
-		/** Add InputManager action: Left click triggers shooting. */
-		inputManager.addMapping("shoot", new MouseButtonTrigger(
-				MouseInput.BUTTON_LEFT));
-		inputManager.addListener(actionListener, "shoot");
-		/** Initialize the scene, materials, and physics space */
-		initMaterials();
-		initFloor();
-		initQuadcopter();
-		initCrossHairs();
-
-		/** Initialize GUI */
-		NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager,
-				inputManager, audioRenderer, guiViewPort);
-		nifty = niftyDisplay.getNifty();
-		nifty.fromXml("Interface/HUD.xml", "HUD", this);
-		guiViewPort.addProcessor(niftyDisplay);
-		java.util.logging.Logger.getAnonymousLogger().getParent()
-				.setLevel(java.util.logging.Level.SEVERE);
-		java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(
-				java.util.logging.Level.SEVERE);
-	}
-
-	/* Initialize the quadcopter */
-	private void initQuadcopter() {
-		/** render setup */
-		quad = new Quadcopter(assetManager);
-		quad_Node = quad.getGeometry();
-		this.rootNode.attachChild(quad_Node);
-		bulletAppState.getPhysicsSpace().add(quad_Node);
-		quad.getPhy().setPhysicsLocation(new Vector3f(0.0f, 5.0f, 0.0f));
-	}
-
 	/**
 	 * Every time the shoot action is triggered, a new cannon ball is produced.
 	 * The ball is set up to fly from the camera position in the camera
@@ -137,14 +87,23 @@ public class Quad3D extends SimpleApplication implements ScreenController {
 												}
 											};
 
-	/** Initialize the materials used in this scene. */
-	public void initMaterials() {
-		cannon_mat = new Material(assetManager,
-				"Common/MatDefs/Misc/Unshaded.j3md");
-		cannon_mat.setColor("Color", new ColorRGBA(1.0f, 0.5f, 0.0f, 1.0f));
-		floor_mat = new Material(assetManager,
-				"Common/MatDefs/Misc/Unshaded.j3md");
-		floor_mat.setColor("Color", new ColorRGBA(0.5f, 1.0f, 1.0f, 1.0f));
+	@Override
+	public void bind(Nifty nifty, Screen screen) {
+	}
+
+	/** A plus sign used as crosshairs to help the player with aiming. */
+	protected void initCrossHairs() {
+		guiNode.detachAllChildren();
+		guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+		BitmapText ch = new BitmapText(guiFont, false);
+		ch.setSize(guiFont.getCharSet().getRenderedSize() * 2);
+		ch.setText("+"); // fake crosshairs :)
+		ch.setLocalTranslation(
+				// center
+				settings.getWidth() / 2
+						- guiFont.getCharSet().getRenderedSize() / 3 * 2,
+				settings.getHeight() / 2 + ch.getLineHeight() / 2, 0);
+		guiNode.attachChild(ch);
 	}
 
 	/** Make a solid floor and add it to the scene. */
@@ -158,6 +117,26 @@ public class Quad3D extends SimpleApplication implements ScreenController {
 		floor_geo.addControl(floor_phy);
 		this.rootNode.attachChild(floor_geo);
 		bulletAppState.getPhysicsSpace().add(floor_phy);
+	}
+
+	/** Initialize the materials used in this scene. */
+	public void initMaterials() {
+		cannon_mat = new Material(assetManager,
+				"Common/MatDefs/Misc/Unshaded.j3md");
+		cannon_mat.setColor("Color", new ColorRGBA(1.0f, 0.5f, 0.0f, 1.0f));
+		floor_mat = new Material(assetManager,
+				"Common/MatDefs/Misc/Unshaded.j3md");
+		floor_mat.setColor("Color", new ColorRGBA(0.5f, 1.0f, 1.0f, 1.0f));
+	}
+
+	/* Initialize the quadcopter */
+	private void initQuadcopter() {
+		/** render setup */
+		quad = new Quadcopter(assetManager);
+		quad_Node = quad.getGeometry();
+		this.rootNode.attachChild(quad_Node);
+		bulletAppState.getPhysicsSpace().add(quad_Node);
+		quad.getPhy().setPhysicsLocation(new Vector3f(0.0f, 5.0f, 0.0f));
 	}
 
 	/**
@@ -178,26 +157,8 @@ public class Quad3D extends SimpleApplication implements ScreenController {
 		ball_geo.addControl(ball_phy);
 		bulletAppState.getPhysicsSpace().add(ball_phy);
 		/** Accelerate the physcial ball to shoot it. */
-		ball_phy.setLinearVelocity(cam.getDirection().mult(25));
-	}
-
-	/** A plus sign used as crosshairs to help the player with aiming. */
-	protected void initCrossHairs() {
-		guiNode.detachAllChildren();
-		guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
-		BitmapText ch = new BitmapText(guiFont, false);
-		ch.setSize(guiFont.getCharSet().getRenderedSize() * 2);
-		ch.setText("+"); // fake crosshairs :)
-		ch.setLocalTranslation(
-				// center
-				settings.getWidth() / 2
-						- guiFont.getCharSet().getRenderedSize() / 3 * 2,
-				settings.getHeight() / 2 + ch.getLineHeight() / 2, 0);
-		guiNode.attachChild(ch);
-	}
-
-	@Override
-	public void bind(Nifty nifty, Screen screen) {
+		ball_phy.setLinearVelocity(cam.getDirection().mult(25f));
+		ball_phy.setDamping(0.5f, 0.5f);
 	}
 
 	@Override
@@ -212,14 +173,62 @@ public class Quad3D extends SimpleApplication implements ScreenController {
 
 	}
 
-	@NiftyEventSubscriber(pattern = "sliderH.*")
-	public void sliderChanged(final String id, final SliderChangedEvent event) {
-		GuiManager.sliderChanged(event, quad);
+	@Override
+	public void simpleInitApp() {
+		/** Set up Physics Game */
+		bulletAppState = new BulletAppState();
+		stateManager.attach(bulletAppState);
+		bulletAppState.setSpeed(10.0f);
+		bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+		bulletAppState.setBroadphaseType(BroadphaseType.AXIS_SWEEP_3);
+		bulletAppState.setWorldMax(new Vector3f(10, 10, 10));
+		bulletAppState.setWorldMin(new Vector3f(-10, -10, -10));
+		bulletAppState.getPhysicsSpace().setAccuracy(1 / 100f);
+
+		/** Configure cam to look at scene */
+		cam.setLocation(new Vector3f(0, 20f, 60f));
+		cam.lookAt(new Vector3f(2, 15, 0), Vector3f.UNIT_Y);
+		flyCam.setMoveSpeed(5.0f);
+		flyCam.setDragToRotate(true);
+
+		/** Add InputManager action: Left click triggers shooting. */
+		inputManager.addMapping("shoot", new MouseButtonTrigger(
+				MouseInput.BUTTON_RIGHT));
+		inputManager.addListener(actionListener, "shoot");
+		/** Initialize the scene, materials, and physics space */
+		initMaterials();
+		initFloor();
+		initQuadcopter();
+		initCrossHairs();
+
+		/** Initialize GUI */
+		NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager,
+				inputManager, audioRenderer, guiViewPort);
+		nifty = niftyDisplay.getNifty();
+		nifty.fromXml("Interface/HUD.xml", "HUD", this);
+		guiViewPort.addProcessor(niftyDisplay);
+		java.util.logging.Logger.getAnonymousLogger().getParent()
+				.setLevel(java.util.logging.Level.SEVERE);
+		java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(
+				java.util.logging.Level.SEVERE);
 	}
 
 	@Override
 	public void simpleUpdate(float tpf) {
-		GuiManager.updateQuadLabels(nifty, quad);
 		super.simpleUpdate(tpf);
+		GuiManager.updateLabels(nifty, quad);
+		GuiManager.updateSliders(nifty, quad);
+	}
+
+	@NiftyEventSubscriber(pattern = "sliderH.*")
+	public void sliderMotorsChanged(final String id,
+			final SliderChangedEvent event) {
+		GuiManager.sliderMotorsChanged(event, quad);
+	}
+
+	@NiftyEventSubscriber(id = "heightSlider")
+	public void sliderHeightChanged(final String id,
+			final SliderChangedEvent event) {
+		GuiManager.sliderHeightChanged(event, quad);
 	}
 }

@@ -7,6 +7,12 @@
   		childLayout="horizontal" text="Force motor 1:">
   		<panel id="panel left" width="60%" height="100%"
   			childLayout="vertical" backgroundColor="#fff0">
+  			<control name="label" id="height" width="100%"
+  				align="left">
+  			</control>
+  			<control name="horizontalSlider" width="100%" id="heightSlider"
+  				visibleToMouse="true" min="5" max="25" buttonStepSize="1">
+  			</control>
   		</panel>
   		<panel id="panel right" width="40%" childLayout="vertical"
   			backgroundColor="#fff0" style="nifty-panel">

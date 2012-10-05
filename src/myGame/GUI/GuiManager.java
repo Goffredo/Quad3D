@@ -3,11 +3,33 @@ package myGame.GUI;
 import myGame.Quadcopter;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Label;
+import de.lessvoid.nifty.controls.Slider;
 import de.lessvoid.nifty.controls.SliderChangedEvent;
 
 public class GuiManager {
 
-	public static void updateQuadLabels(Nifty nifty, Quadcopter quad) {
+	public static void sliderMotorsChanged(SliderChangedEvent event, Quadcopter quad) {
+		float newPPM = event.getValue();
+		int motorNumber = Integer.parseInt(event.getSlider().getId().substring(
+				7));
+		quad.getMotors().motors[motorNumber].setPPM(newPPM);
+	}
+
+	private static void updateForceLabel(Label niftyElement, Quadcopter quad) {
+		int motorNumber = Integer.parseInt(niftyElement.getId().substring(6));
+		niftyElement.setText("Force erogated by motor " + motorNumber + " : "
+				+ Float.toString(quad.getMotors().motors[motorNumber]
+						.getCurrentForce()));
+	}
+
+	private static void updatePPMLabel(Label niftyElement, Quadcopter quad) {
+		int motorNumber = Integer.parseInt(niftyElement.getId().substring(4));
+		niftyElement.setText("Current set PPM motor " + motorNumber + " : "
+				+ Float.toString(quad.getMotors().motors[motorNumber]
+						.getCurrentRPM()));
+	}
+
+	public static void updateLabels(Nifty nifty, Quadcopter quad) {
 		Label niftyElement = nifty.getCurrentScreen().findNiftyControl(
 				"forceM0", Label.class);
 		updateForceLabel(niftyElement, quad);
@@ -35,27 +57,25 @@ public class GuiManager {
 		niftyElement = nifty.getCurrentScreen().findNiftyControl("PPMM3",
 				Label.class);
 		updatePPMLabel(niftyElement, quad);
+
+		niftyElement = nifty.getCurrentScreen().findNiftyControl("height",
+				Label.class);
+		niftyElement.setText("Height: "
+				+ quad.getGeometry().getLocalTranslation().y);
 	}
 
-	private static void updatePPMLabel(Label niftyElement, Quadcopter quad) {
-		int motorNumber = Integer.parseInt(niftyElement.getId().substring(4));
-		niftyElement.setText("Current set PPM motor " + motorNumber + " : "
-				+ Float.toString(quad.getQuad_motors().motors[motorNumber]
-						.getCurrentPPM()));
+	public static void updateSliders(Nifty nifty, Quadcopter quad) {
+		Slider slider = null;
+		for (int i = 0; i < 4; i++) {
+			slider = nifty.getCurrentScreen().findNiftyControl("sliderH" + i,
+					Slider.class);
+			slider.setValue(quad.getMotors().motors[i].getSetPPM());
+		}
 	}
 
-	private static void updateForceLabel(Label niftyElement, Quadcopter quad) {
-		int motorNumber = Integer.parseInt(niftyElement.getId().substring(6));
-		niftyElement.setText("Force erogated by motor " + motorNumber + " : "
-				+ Float.toString(quad.getQuad_motors().motors[motorNumber]
-						.getCurrentForce()));
-	}
-
-	public static void sliderChanged(SliderChangedEvent event, Quadcopter quad) {
-		float newPPM = event.getValue();
-		int motorNumber = Integer.parseInt(event.getSlider().getId().substring(
-				7));
-		quad.getQuad_motors().motors[motorNumber].setPPM(newPPM);
+	public static void sliderHeightChanged(SliderChangedEvent event,
+			Quadcopter quad) {
+		quad.getHeightControl().setTargetHeight(event.getValue());
 	}
 
 }

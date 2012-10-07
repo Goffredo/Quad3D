@@ -13,7 +13,7 @@ public class HeightControl extends AbstractControl {
 
 	private final MotorControl	motors;
 
-	private final PID			pid		= new PID(50f, 1f, 2000f);
+	private final PID			pid		= new PID(50f, 1f, 2000f, 1200f, 1700f);
 
 	private float				target			= 5.0f;
 
@@ -42,7 +42,7 @@ public class HeightControl extends AbstractControl {
 			pidOutput = pid.update(y, target);
 
 			for (int i = 0; i < 4; i++) {
-				motors.motors[i].setPPM(pidOutput);
+				motors.setPPM(pidOutput, i);
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package myGame;
 
 import myGame.motors.MotorControl;
+import stabilization.Stabilizer1;
 import stabilizationControls.HeightControl;
 
 import com.jme3.asset.AssetManager;
@@ -11,11 +12,12 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.control.Control;
 import com.jme3.scene.shape.Box;
 
 public class Quadcopter {
 
-	private final float				mass	= 2f;
+	private final float				mass	= 0.9f;
 	private final RigidBodyControl	phy;
 	private final MotorControl		motors;
 	private final HeightControl		heightControl;
@@ -32,11 +34,17 @@ public class Quadcopter {
 
 	private void addControls() {
 
+		geometry.addControl(stabilization());
+
 		geometry.addControl(getHeightControl());
 
 		geometry.addControl(motors);
 
 		geometry.addControl(phy);
+	}
+
+	private Control stabilization() {
+		return new Stabilizer1(motors);
 	}
 
 	private Node createGeometry(AssetManager assetManager) {

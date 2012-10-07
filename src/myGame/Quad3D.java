@@ -63,7 +63,7 @@ public class Quad3D extends SimpleApplication implements ScreenController {
 
 	static {
 		/** Initialize the cannon ball geometry */
-		sphere = new Sphere(32, 32, 0.2f, true, false);
+		sphere = new Sphere(32, 32, 2f, true, false);
 		sphere.setTextureMode(TextureMode.Projected);
 		/** Initialize the floor geometry */
 		floor = new Box(Vector3f.ZERO, 10f, 0.1f, 5f);
@@ -152,13 +152,13 @@ public class Quad3D extends SimpleApplication implements ScreenController {
 		/** Position the cannon ball */
 		ball_geo.setLocalTranslation(cam.getLocation());
 		/** Make the ball physcial with a mass > 0.0f */
-		ball_phy = new RigidBodyControl(1f);
+		ball_phy = new RigidBodyControl(3f);
 		/** Add physical ball to physics space. */
 		ball_geo.addControl(ball_phy);
 		bulletAppState.getPhysicsSpace().add(ball_phy);
 		/** Accelerate the physcial ball to shoot it. */
 		ball_phy.setLinearVelocity(cam.getDirection().mult(25f));
-		ball_phy.setDamping(0.5f, 0.5f);
+		ball_phy.setDamping(0.1f, 0.5f);
 	}
 
 	@Override
@@ -188,7 +188,7 @@ public class Quad3D extends SimpleApplication implements ScreenController {
 		/** Configure cam to look at scene */
 		cam.setLocation(new Vector3f(0, 20f, 60f));
 		cam.lookAt(new Vector3f(2, 15, 0), Vector3f.UNIT_Y);
-		flyCam.setMoveSpeed(5.0f);
+		flyCam.setMoveSpeed(50.0f);
 		flyCam.setDragToRotate(true);
 
 		/** Add InputManager action: Left click triggers shooting. */

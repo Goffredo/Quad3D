@@ -7,7 +7,7 @@ public class Motor {
 														// semplicemente per
 														// fermare la funzione
 														// dopo un po'
-	private static final float	responsivness	= 0.8f;	// questo e' la
+	private static final float	responsivness	= 0.1f;	// questo e' la
 														// qualita'
 														// del motore (tra 0 e
 														// 1)
@@ -18,7 +18,7 @@ public class Motor {
 	public float getCurrentForce() {
 		float c = currentRPM - 1190;
 		c *= c;
-		c /= 200000f;
+		c /= 30000f;
 		return c;
 	}
 
